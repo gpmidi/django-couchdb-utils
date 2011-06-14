@@ -5,6 +5,7 @@ from couchdbkit.ext.django.schema import *
 
 
 class Session(Document):
+    key          = StringProperty()
     session_key  = StringProperty()
     session_data = StringProperty()
     expire_date  = StringProperty()
