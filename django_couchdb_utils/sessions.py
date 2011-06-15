@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.contrib.sessions.backends.base import SessionBase, CreateError
@@ -69,3 +70,12 @@ class SessionStore(SessionBase):
         if not session:
             return None
         session.delete()
+
+
+def cleanup_sessions(remove_all=False):
+    r = Session.view('django_couchdb_utils/sessions_by_key', include_docs=True)
+    for session in r.all():
+        datetimeprop = DateTimeProperty()
+        expire_date = datetimeprop.to_python(session.expire_date)
+        if remove_all or expire_date <= datetime.utcnow():
+            session.delete()
