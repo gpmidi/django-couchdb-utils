@@ -15,7 +15,6 @@ class User(Document):
     is_superuser  = BooleanProperty(default=False)
     last_login    = DateTimeProperty(required=False)
     date_joined   = DateTimeProperty(default=datetime.utcnow)
-    backend       = StringProperty()
 
     def __unicode__(self):
         return self.username
