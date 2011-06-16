@@ -74,8 +74,6 @@ class SessionStore(SessionBase):
 
 def cleanup_sessions(remove_all=False):
     r = Session.view('django_couchdb_utils/sessions_by_key', include_docs=True)
-    datetimeprop = DateTimeProperty()
     for session in r.all():
-        expire_date = datetimeprop.to_python(session.expire_date)
-        if remove_all or expire_date <= datetime.utcnow():
+        if remove_all or session.expire_date <= datetime.utcnow():
             session.delete()
