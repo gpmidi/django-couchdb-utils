@@ -26,7 +26,7 @@ from django_couchdb_utils.auth import User
 
 class AuthTests(TestCase):
     def setUp(self):
-        db = get_db('labs')
+        db = get_db('django_couchdb_utils')
         db.flush()
 
     def test_username_uniqueness(self):
