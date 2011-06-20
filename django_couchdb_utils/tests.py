@@ -30,17 +30,29 @@ class AuthTests(TestCase):
         db.flush()
 
     def test_username_uniqueness(self):
-        user = User(username='frank', password='secret')
+        data = {
+            'username': 'frank',
+            'password': 'secret',
+        }
+        user = User(**data)
         user.save()
 
-        user2 = User(username='frank', password='secret')
+        user2 = User(**data)
         with self.assertRaisesRegexp(Exception, 'This username is already in use'):
             user2.save()
 
     def test_email_uniqueness(self):
-        user = User(username='frank', password='secret', email='user@host.com')
+        data = {
+            'username': 'frank',
+            'password': 'secret',
+            'email': 'user@host.com',
+        }
+        user = User(**data)
         user.save()
 
-        user2 = User(username='mark', password='secret', email='user@host.com')
+        data.update({
+            'username': 'mark',
+        })
+        user2 = User(**data)
         with self.assertRaisesRegexp(Exception, 'This email address is already in use'):
             user2.save()
