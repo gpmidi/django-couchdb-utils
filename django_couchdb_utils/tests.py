@@ -77,6 +77,20 @@ class AuthTests(TestHelper):
 
 
 class SessionTests(TestHelper):
+    def test_store_and_retrieve_session(self):
+        data = {
+            'session_key': 'dummy',
+            'session_data': 'dummy',
+            'expire_date': datetime.utcnow(),
+        }
+        session = Session(**data)
+        session.save()
+
+        session = Session.get_session(data['session_key'])
+        self.assertIsNotNone(session)
+        for k, v in data.values():
+            self.assertEqual(v, getattr(session, k))
+
     def test_cleanup_sessions(self):
         '''Created two sessions, one current, one outdated. Make sure the stale
         one is removed, the current is kept.'''
