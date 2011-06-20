@@ -17,11 +17,14 @@ Then execute the test runner in the standard way:
 $ python manage.py test django_couchdb_utils
 """
 
+from datetime import datetime, timedelta
+
 from django.test import TestCase
 
 from couchdbkit.ext.django.loading import get_db
 
 from django_couchdb_utils.auth import User
+from django_couchdb_utils.sessions import Session, cleanup_sessions
 
 
 class TestHelper(TestCase):
@@ -38,12 +41,12 @@ class TestHelper(TestCase):
             callable(*args, **kw)
         self.assertEqual(cm.exception.message, msg)
 
-
-class AuthTests(TestHelper):
     def setUp(self):
         db = get_db('django_couchdb_utils')
         db.flush()
 
+
+class AuthTests(TestHelper):
     def test_username_uniqueness(self):
         data = {
             'username': 'frank',
@@ -71,3 +74,32 @@ class AuthTests(TestHelper):
         user2 = User(**data)
         self.exc_msg_is(Exception, 'This email address is already in use',
                         user2.save)
+
+
+class SessionTests(TestHelper):
+    def test_cleanup_sessions(self):
+        '''Created two sessions, one current, one outdated. Make sure the stale
+        one is removed, the current is kept.'''
+        data = {
+            'session_key': 'dummy',
+            'session_data': 'dummy',
+            'expire_date': datetime.utcnow() - timedelta(minutes=1)
+        }
+        session = Session(**data)
+        session.save()
+
+        data2 = data.copy()
+        data2.update({
+            'session_key': 'dummy2',
+            'expire_date': data['expire_date'] + timedelta(minutes=2)
+        })
+        session2 = Session(**data2)
+        session2.save()
+
+        cleanup_sessions()
+
+        session = Session.get_session(data['session_key'])
+        self.assertIsNone(session)
+
+        session2 = Session.get_session(data2['session_key'])
+        self.assertIsNotNone(session2)
