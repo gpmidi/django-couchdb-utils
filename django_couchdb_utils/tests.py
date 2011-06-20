@@ -38,8 +38,9 @@ class AuthTests(TestCase):
         user.save()
 
         user2 = User(**data)
-        with self.assertRaisesRegexp(Exception, 'This username is already in use'):
+        with self.assertRaises(Exception) as cm:
             user2.save()
+        self.assertEqual(cm.exception.message, 'This username is already in use')
 
     def test_email_uniqueness(self):
         data = {
@@ -54,5 +55,6 @@ class AuthTests(TestCase):
             'username': 'mark',
         })
         user2 = User(**data)
-        with self.assertRaisesRegexp(Exception, 'This email address is already in use'):
+        with self.assertRaises(Exception) as cm:
             user2.save()
+        self.assertEqual(cm.exception.message, 'This email address is already in use')
