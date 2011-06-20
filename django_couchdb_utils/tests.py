@@ -28,9 +28,9 @@ from django_couchdb_utils.sessions import Session, cleanup_sessions
 
 
 class TestHelper(TestCase):
-    def exc_msg_is(self, exc, msg, callable, *args, **kw):
+    def assertExcMsg(self, exc, msg, callable, *args, **kw):
         '''
-        Workaround for assertRaisesRegexp, which seems to be broken in stdilb. In
+        Workaround for assertRaisesRegexp, which seems to be broken in stdlib. In
         theory the instructed use is:
 
         with self.assertRaisesRegexp(ValueError, 'literal'):
@@ -56,8 +56,8 @@ class AuthTests(TestHelper):
         user.save()
 
         user2 = User(**data)
-        self.exc_msg_is(Exception, 'This username is already in use',
-                        user2.save)
+        self.assertExcMsg(Exception, 'This username is already in use',
+                          user2.save)
 
     def test_email_uniqueness(self):
         data = {
@@ -72,8 +72,8 @@ class AuthTests(TestHelper):
             'username': 'mark',
         })
         user2 = User(**data)
-        self.exc_msg_is(Exception, 'This email address is already in use',
-                        user2.save)
+        self.assertExcMsg(Exception, 'This email address is already in use',
+                          user2.save)
 
 
 class SessionTests(TestHelper):
