@@ -45,7 +45,7 @@ class SessionStore(SessionBase):
             raise CreateError
         if must_create:
             session = Session()
-            session.key = self.session_key
+            session.session_key = self.session_key
             session.session_data = self.encode(self._get_session(no_load=must_create))
             session.expire_date = self.get_expiry_date()
         else:
