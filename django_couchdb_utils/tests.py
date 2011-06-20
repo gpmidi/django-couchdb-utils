@@ -24,7 +24,22 @@ from couchdbkit.ext.django.loading import get_db
 from django_couchdb_utils.auth import User
 
 
-class AuthTests(TestCase):
+class TestHelper(TestCase):
+    def exc_msg_is(self, exc, msg, callable, *args, **kw):
+        '''
+        Workaround for assertRaisesRegexp, which seems to be broken in stdilb. In
+        theory the instructed use is:
+
+        with self.assertRaisesRegexp(ValueError, 'literal'):
+           int('XYZ')
+       '''
+
+        with self.assertRaises(exc) as cm:
+            callable(*args, **kw)
+        self.assertEqual(cm.exception.message, msg)
+
+
+class AuthTests(TestHelper):
     def setUp(self):
         db = get_db('django_couchdb_utils')
         db.flush()
@@ -38,9 +53,8 @@ class AuthTests(TestCase):
         user.save()
 
         user2 = User(**data)
-        with self.assertRaises(Exception) as cm:
-            user2.save()
-        self.assertEqual(cm.exception.message, 'This username is already in use')
+        self.exc_msg_is(Exception, 'This username is already in use',
+                        user2.save)
 
     def test_email_uniqueness(self):
         data = {
@@ -55,6 +69,5 @@ class AuthTests(TestCase):
             'username': 'mark',
         })
         user2 = User(**data)
-        with self.assertRaises(Exception) as cm:
-            user2.save()
-        self.assertEqual(cm.exception.message, 'This email address is already in use')
+        self.exc_msg_is(Exception, 'This email address is already in use',
+                        user2.save)
