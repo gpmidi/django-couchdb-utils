@@ -1,7 +1,13 @@
 from datetime import datetime
 from django.conf import settings
 from django.contrib.auth.models import get_hexdigest, check_password, UNUSABLE_PASSWORD
+from django.core.exceptions import ImproperlyConfigured
+
 from couchdbkit.ext.django.schema import *
+
+
+class SiteProfileNotAvailable(Exception):
+    pass
 
 
 class User(Document):
@@ -84,6 +90,33 @@ class User(Document):
         "Sends an e-mail to this User."
         from django.core.mail import send_mail
         send_mail(subject, message, from_email, [self.email])
+
+    def get_profile(self):
+        if not hasattr(self, '_profile_cache'):
+            from django.conf import settings
+            if not getattr(settings, 'AUTH_PROFILE_MODULE', False):
+                raise SiteProfileNotAvailable('You need to set AUTH_PROFILE_MO'
+                                              'DULE in your project settings')
+            try:
+                app_label, model_name = settings.AUTH_PROFILE_MODULE.split('.')
+            except ValueError:
+                raise SiteProfileNotAvailable('app_label and model_name should'
+                        ' be separated by a dot in the AUTH_PROFILE_MODULE set'
+                        'ting')
+
+            try:
+                # XXX custom loading
+                from labs.models import UserProfile as model
+                if model is None:
+                    raise SiteProfileNotAvailable('Unable to load the profile '
+                        'model, check AUTH_PROFILE_MODULE in your project sett'
+                        'ings')
+                self._profile_cache = model.get_userprofile(self.get_id)
+                #self._profile_cache.user = self
+            except (ImportError, ImproperlyConfigured):
+                raise SiteProfileNotAvailable
+        return self._profile_cache
+
 
     def get_and_delete_messages(self):
         # Todo: Implement messaging and groups.
