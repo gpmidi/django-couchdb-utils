@@ -19,6 +19,8 @@ $ python manage.py test django_couchdb_utils
 
 from datetime import datetime, timedelta
 
+from django.contrib import auth as core_auth
+
 from django_couchdb_utils.auth import User
 from django_couchdb_utils.sessions import Session, cleanup_sessions
 from django_couchdb_utils.tests.utils import DbTester
@@ -52,6 +54,23 @@ class AuthTests(DbTester):
         user2 = User(**data)
         self.assertExcMsg(Exception, 'This email address is already in use',
                           user2.save)
+
+    def test_user_authentication(self):
+        authdata = {
+            'username': 'mickey',
+            'password': 'secret',
+        }
+        data = authdata.copy()
+        data.update({
+            'email': 'mickey@mice.com',
+        })
+        user = User(**data)
+        user.set_password(data['password'])
+        user.save()
+
+        user = core_auth.authenticate(**authdata)
+
+        self.assertIsNotNone(user)
 
 
 class SessionTests(DbTester):
