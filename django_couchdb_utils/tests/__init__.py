@@ -27,6 +27,23 @@ from django_couchdb_utils.tests.utils import DbTester
 
 
 class AuthTests(DbTester):
+    def test_user_registration(self):
+        data = {
+            'username': 'frank',
+            'password': 'secret',
+            'email': 'user@host.com',
+        }
+        user = User(**data)
+        user.save()
+
+        user = User.get_user(data['username'])
+        self.assertIsNotNone(user)
+        self.assertEqual(user.username, data['username'])
+
+        user = User.get_user_by_email(data['email'])
+        self.assertIsNotNone(user)
+        self.assertEqual(user.username, data['username'])
+
     def test_username_uniqueness(self):
         data = {
             'username': 'frank',
