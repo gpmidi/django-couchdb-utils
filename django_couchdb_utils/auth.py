@@ -92,6 +92,10 @@ class User(Document):
         send_mail(subject, message, from_email, [self.email])
 
     def get_profile(self):
+        """
+        Returns site-specific profile for this user. Raises
+        SiteProfileNotAvailable if this site does not allow profiles.
+        """
         if not hasattr(self, '_profile_cache'):
             from django.conf import settings
             if not getattr(settings, 'AUTH_PROFILE_MODULE', False):
@@ -105,18 +109,20 @@ class User(Document):
                         'ting')
 
             try:
-                # XXX custom loading
-                from labs.models import UserProfile as model
+                ### model = models.get_model(app_label, model_name)
+                from django.db.models.loading import get_app
+                app = get_app(app_label)
+                model = getattr(app, model_name)
                 if model is None:
                     raise SiteProfileNotAvailable('Unable to load the profile '
                         'model, check AUTH_PROFILE_MODULE in your project sett'
                         'ings')
+                ### self._profile_cache = model._default_manager.using(self._state.db).get(user__id__exact=self.id)
                 self._profile_cache = model.get_userprofile(self.get_id)
-                #self._profile_cache.user = self
+                ### self._profile_cache.user = self
             except (ImportError, ImproperlyConfigured):
                 raise SiteProfileNotAvailable
         return self._profile_cache
-
 
     def get_and_delete_messages(self):
         # Todo: Implement messaging and groups.
