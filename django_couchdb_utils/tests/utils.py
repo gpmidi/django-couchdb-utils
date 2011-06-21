@@ -1,5 +1,7 @@
 from django.test import TestCase
 
+from couchdbkit.ext.django.loading import get_db
+
 
 class TestHelper(TestCase):
     def assertExcMsg(self, exc, msg, callable, *args, **kw):
@@ -14,3 +16,10 @@ class TestHelper(TestCase):
         with self.assertRaises(exc) as cm:
             callable(*args, **kw)
         self.assertEqual(cm.exception.message, msg)
+
+
+class DbTester(TestHelper):
+    '''Keep separate from TestHelper to make it subclassable as library code'''
+    def setUp(self):
+        db = get_db('django_couchdb_utils')
+        db.flush()

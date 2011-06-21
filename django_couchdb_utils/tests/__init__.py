@@ -19,17 +19,9 @@ $ python manage.py test django_couchdb_utils
 
 from datetime import datetime, timedelta
 
-from couchdbkit.ext.django.loading import get_db
-
 from django_couchdb_utils.auth import User
 from django_couchdb_utils.sessions import Session, cleanup_sessions
-from django_couchdb_utils.tests.utils import TestHelper
-
-
-class DbTester(TestHelper):
-    def setUp(self):
-        db = get_db('django_couchdb_utils')
-        db.flush()
+from django_couchdb_utils.tests.utils import DbTester
 
 
 class AuthTests(DbTester):
