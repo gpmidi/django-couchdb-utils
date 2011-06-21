@@ -113,12 +113,14 @@ class User(Document):
                 from django.db.models.loading import get_app
                 app = get_app(app_label)
                 model = getattr(app, model_name)
+
                 if model is None:
                     raise SiteProfileNotAvailable('Unable to load the profile '
                         'model, check AUTH_PROFILE_MODULE in your project sett'
                         'ings')
                 ### self._profile_cache = model._default_manager.using(self._state.db).get(user__id__exact=self.id)
                 self._profile_cache = model.get_userprofile(self.get_id)
+
                 ### self._profile_cache.user = self
             except (ImportError, ImproperlyConfigured):
                 raise SiteProfileNotAvailable
