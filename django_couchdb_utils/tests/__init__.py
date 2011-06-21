@@ -19,34 +19,20 @@ $ python manage.py test django_couchdb_utils
 
 from datetime import datetime, timedelta
 
-from django.test import TestCase
-
 from couchdbkit.ext.django.loading import get_db
 
 from django_couchdb_utils.auth import User
 from django_couchdb_utils.sessions import Session, cleanup_sessions
+from django_couchdb_utils.tests.utils import TestHelper
 
 
-class TestHelper(TestCase):
-    def assertExcMsg(self, exc, msg, callable, *args, **kw):
-        '''
-        Workaround for assertRaisesRegexp, which seems to be broken in stdlib. In
-        theory the instructed use is:
-
-        with self.assertRaisesRegexp(ValueError, 'literal'):
-           int('XYZ')
-       '''
-
-        with self.assertRaises(exc) as cm:
-            callable(*args, **kw)
-        self.assertEqual(cm.exception.message, msg)
-
+class DbTester(TestHelper):
     def setUp(self):
         db = get_db('django_couchdb_utils')
         db.flush()
 
 
-class AuthTests(TestHelper):
+class AuthTests(DbTester):
     def test_username_uniqueness(self):
         data = {
             'username': 'frank',
@@ -76,7 +62,7 @@ class AuthTests(TestHelper):
                           user2.save)
 
 
-class SessionTests(TestHelper):
+class SessionTests(DbTester):
     def test_store_and_retrieve_session(self):
 
         # couchdbkit doesn't preserve microseconds
