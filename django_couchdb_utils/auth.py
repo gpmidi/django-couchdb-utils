@@ -112,7 +112,7 @@ class User(Document):
                 ### model = models.get_model(app_label, model_name)
                 from django.db.models.loading import get_app
                 app = get_app(app_label)
-                model = getattr(app, model_name)
+                model = getattr(app, model_name, None)
 
                 if model is None:
                     raise SiteProfileNotAvailable('Unable to load the profile '
