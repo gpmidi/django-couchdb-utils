@@ -1,3 +1,6 @@
+from django.conf import settings
+from .models import User
+
 class CouchDBAuthBackend(object):
     # Create a User object if not exists.
     # Subclasses must override this attribute.

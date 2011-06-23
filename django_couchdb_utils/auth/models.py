@@ -1,9 +1,11 @@
 from datetime import datetime
+from couchdbkit.ext.django.schema import *
+from couchdbkit.exceptions import ResourceNotFound
 from django.conf import settings
 from django.contrib.auth.models import get_hexdigest, check_password, UNUSABLE_PASSWORD
 from django.core.exceptions import ImproperlyConfigured
-
-from couchdbkit.ext.django.schema import *
+from django.core.mail import send_mail
+import random
 
 
 class SiteProfileNotAvailable(Exception):
@@ -22,6 +24,9 @@ class User(Document):
     last_login    = DateTimeProperty(required=False)
     date_joined   = DateTimeProperty(default=datetime.utcnow)
 
+    class Meta:
+        app_label = "django_couchdb_utils_auth"
+
     def __unicode__(self):
         return self.username
 
@@ -33,11 +38,10 @@ class User(Document):
 
     def save(self):
         if not self.check_username():
-            raise Exception('This username is already in use')
+            raise Exception('This username is already in use.')
         if not self.check_email():
-            raise Exception('This email address is already in use')
-
-        super(User, self).save()
+            raise Exception('This email address is already in use.')
+        return super(User, self).save()
 
 
     def check_username(self):
@@ -66,7 +70,6 @@ class User(Document):
         return True
 
     def set_password(self, raw_password):
-        import random
         algo = 'sha1'
         salt = get_hexdigest(algo, str(random.random()), str(random.random()))[:5]
         hsh = get_hexdigest(algo, salt, raw_password)
@@ -88,7 +91,6 @@ class User(Document):
 
     def email_user(self, subject, message, from_email=None):
         "Sends an e-mail to this User."
-        from django.core.mail import send_mail
         send_mail(subject, message, from_email, [self.email])
 
     def get_profile(self):
@@ -132,24 +134,31 @@ class User(Document):
 
     @classmethod
     def get_user(cls, username, is_active=True):
-        if is_active is None:
-            param = dict(startkey=[username, False], endkey=[username, True])
-        else:
-            param = dict(key=[username, is_active])
+        param = {"key": username}
 
-        r = cls.view('django_couchdb_utils/users_by_username', include_docs=True, **param)
-        return r.first() if r else None
+        r = cls.view('%s/users_by_username' % cls._meta.app_label, 
+                     include_docs=True, 
+                     **param).first()
+        if r and r.is_active:
+            return r
+        return None
 
     @classmethod
     def get_user_by_email(cls, email, is_active=True):
-        if is_active is None:
-            param = dict(startkey=[email, False], endkey=[email, True])
-        else:
-            param = dict(key=[email, is_active])
+        param = {"key": email}
 
-        r = cls.view('django_couchdb_utils/users_by_email', include_docs=True, **param)
-        return r.first() if r else None
+        r = cls.view('%s/users_by_email' % cls._meta.app_label, 
+                     include_docs=True, **param).first()
+        if r and r.is_active:
+            return r
+        return None
 
     @classmethod
     def all_users(cls):
-        return cls.view('django_couchdb_utils/users_by_username', include_docs=True).iterator()
+        view = cls.view('%s/users_by_username' % cls._meta.app_label, include_docs=True)
+        try:
+            view.count()
+            return view.iterator()
+        except ResourceNotFound:
+            return []
+

@@ -1,10 +1,14 @@
+from django.core.management.base import BaseCommand
+from optparse import make_option
+from django.contrib.auth.models import User as Dj_User
+from django_couchdb_utils.auth.models import User
+
 def migrate_users(
         get_user_data=lambda _: {},
         get_profile_data=lambda p: p.__dict__,
         progress_callback= lambda: None):
 
-    from django.contrib.auth import models
-    users = models.User.objects.all()
+    users = Dj_User.objects.all()
     ATTRIBS = ('username', 'first_name', 'last_name', 'email',
                 'password', 'is_staff', 'is_active', 'is_superuser',
                 'last_login', 'date_joined')
@@ -36,3 +40,9 @@ def migrate_users(
         new_user.save()
 
         progress_callback(n, total)
+
+class Command(BaseCommand):
+    """Migrate django db backed users to the couchdb backed database"""
+
+    def handle(self, *args, **options):
+        migrate_users()

@@ -12,4 +12,11 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
-        sessions.cleanup_sessions(remove_all=options.get('remove_all'))
+        cleanup_sessions(remove_all=options.get('remove_all'))
+
+
+def cleanup_sessions(remove_all=False):
+    r = Session.view('django_couchdb_utils/sessions_by_key', include_docs=True)
+    for session in r.all():
+        if remove_all or session.expire_date <= datetime.utcnow():
+            session.delete()

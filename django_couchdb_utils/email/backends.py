@@ -1,15 +1,9 @@
-from couchdbkit.ext.django.schema import *
-
 from django.core import mail
 from django.core.mail.backends.base import BaseEmailBackend
 from django.conf import settings
 
-
 DEFAULT_WRAPPED_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 COPY_PROPERTIES=('subject', 'body', 'from_email', 'to', 'cc', 'bcc', 'headers')
-
-
-
 
 class CouchDBEmailBackend(BaseEmailBackend):
     """

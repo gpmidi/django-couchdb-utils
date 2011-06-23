@@ -1,3 +1,7 @@
+from couchdbkit.ext.django.schema import *
+from couchdbkit.exceptions import ResourceNotFound
+from django.conf import settings
+
 class EmailMessage(Document):
     """
     A couchdbkit Document to store emails, uses the same properties as
@@ -13,10 +17,17 @@ class EmailMessage(Document):
 #   attachments = blobs/attachments ?
     headers     = DictProperty()
 
+    class Meta:
+        app_label = "django_couchdb_utils_email"
+
     @classmethod
     def all_messages(cls):
-        r = cls.view('django_couchdb_utils/emails', include_docs=True)
-        return list(r)
+        r = cls.view('%s/emails' % cls._meta.app_label, include_docs=True).iterator()
+        try:
+            return list(r)
+        except ResourceNotFound:
+            return []
 
     def __repr__(self):
         return 'EmailMessage (%s)' % self._id
+
