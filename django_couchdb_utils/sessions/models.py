@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from couchdbkit.ext.django.schema import *
 from couchdbkit.exceptions import ResourceNotFound
 
