@@ -19,7 +19,7 @@ class Session(Document):
 
 
 def cleanup_sessions(remove_all=False):
-    r = Session.view('django_couchdb_utils/sessions_by_key', include_docs=True)
+    r = Session.view('%s/sessions_by_key' % Session._meta.app_label, include_docs=True)
     for session in r.all():
         if remove_all or session.expire_date <= datetime.utcnow():
             session.delete()
