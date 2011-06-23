@@ -1,50 +1,56 @@
-from auth.models import User
+from django_couchdb_utils.auth.models import User
 from datetime import datetime
 from django.http import Http404
 from django_openid import signed
 from django.conf import settings
-from openid_consumer.consumer import AuthConsumer
-from openid_consumer.forms import RegistrationFormPasswordConfirm
-from openid_consumer.models import server_uri, DB_PREFIX, get_values, get_or_create
+from .consumer import AuthConsumer
+from .forms import RegistrationFormPasswordConfirm
+from .models import UserOpenidAssociation
 from django_openid.registration import RegistrationConsumer as DjangoOpenIDRegistrationConsumer
+from couchdbkit.exceptions import ResourceNotFound
 
 class RegistrationConsumer(AuthConsumer, DjangoOpenIDRegistrationConsumer):
     RegistrationForm   = RegistrationFormPasswordConfirm
 
     def user_is_unconfirmed(self, user):
-        return len(get_values(self.auth_db.view('auth_is_active/all', key=[user['_id'], False])))
+        count = 0
+        try:
+            count = User.view('%s/users_by_username' % User._meta.app_label, 
+                              key=user.username, include_docs=True).count()
+        except ResourceNotFound:
+            return False
+        if count:
+            return True
+        return False
 
     def mark_user_confirmed(self, user):
         user.is_active = True
-        return user.store(self.auth_db)
+        return user.store()
 
     def mark_user_unconfirmed(self, user):
         user.is_active = False
-        user.store(self.auth_db)
+        return user.store()
 
     def create_user(self, request, data, openid=None):
         user = User(
-            id = data['username'],
+            username = data['username'],
             first_name = data.get('first_name', ''),
             last_name = data.get('last_name', ''),
             email = data.get('email', ''),
         )
-        user.store(self.auth_db)
         # Set OpenID, if one has been associated
         if openid:
-            from openid_consumer.models import UserOpenidAssociation
-            temp_db = get_or_create(server_uri, "%s%s" %(DB_PREFIX, 'user_openid'))
-            uoa = UserOpenidAssociation(user_id = user.id, 
+            uoa = UserOpenidAssociation(user_id = user.username, 
                                         openid  = openid, 
                                         created = datetime.now())
-            uoa.store(temp_db)            
+            uoa.store()            
         # Set password, if one has been specified
         password = data.get('password')
         if password:
             user.set_password(password)
         else:
             user.set_unusable_password()
-        user.store(self.auth_db)
+        user.store()
         return user
 
     def suggest_nickname(self, nickname):
@@ -53,7 +59,15 @@ class RegistrationConsumer(AuthConsumer, DjangoOpenIDRegistrationConsumer):
             return ''
         original_nickname = nickname
         suffix = None
-        while len(self.auth_db.view('auth_id/all', key=nickname).rows):
+        username_exists = True
+        while username_exists:
+            try:
+                username_exists = User.view('%s/users_by_username' % User._meta.app_label, 
+                                            key=nickname, include_docs=True).count()
+            except ResourceNotFound:
+                username_exists = False
+            if not username_exists:
+                break
             if suffix is None:
                 suffix = 1
             else:
@@ -76,7 +90,7 @@ class RegistrationConsumer(AuthConsumer, DjangoOpenIDRegistrationConsumer):
             if form.is_valid():
                 u = request.user
                 u.set_password(form.cleaned_data['password'])
-                u.store(self.auth_db)
+                u.store()
                 return self.show_password_has_been_set(request)
         else:
             form = ChangePasswordForm(request.user)
@@ -101,17 +115,21 @@ class RegistrationConsumer(AuthConsumer, DjangoOpenIDRegistrationConsumer):
             )
         # Only line change compared with django-openid
         user_id = value
-        try:
-            user = self.lookup_user_by_id(user_id)[0]
-        except IndexError: # Maybe the user was deleted?
+        user = self.lookup_user_by_id(user_id)
+        if not user: # Maybe the user was deleted?
             return self.show_error(request, self.r_user_not_found_message)
 
         # Check user is NOT active but IS in the correct group
         if self.user_is_unconfirmed(user):
             # Confirm them
-            user = User.load(self.auth_db, user['_id'])
-            self.mark_user_confirmed(user)
-            self.log_in_user(request, user)
+            try:
+                user = User.view('%s/users_by_username' % User._meta.app_label, 
+                                 key=user.username, include_docs=True).first()
+            except ResourceNotFound:
+                user = None
+            if user:
+                self.mark_user_confirmed(user)
+                self.log_in_user(request, user)
             return self.on_registration_complete(request)
         else:
             return self.show_error(request, self.c_already_confirmed_message)
