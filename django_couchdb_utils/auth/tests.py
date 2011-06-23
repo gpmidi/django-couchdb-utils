@@ -31,7 +31,7 @@ class AuthTests(DbTester):
         user.save()
 
         user2 = User(**data)
-        self.assertExcMsg(Exception, 'This username is already in use',
+        self.assertExcMsg(Exception, 'This username is already in use.',
                           user2.save)
 
     def test_email_uniqueness(self):
@@ -47,7 +47,7 @@ class AuthTests(DbTester):
             'username': 'mark',
         })
         user2 = User(**data)
-        self.assertExcMsg(Exception, 'This email address is already in use',
+        self.assertExcMsg(Exception, 'This email address is already in use.',
                           user2.save)
 
     def test_user_authentication(self):
