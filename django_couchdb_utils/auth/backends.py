@@ -8,7 +8,7 @@ class CouchDBAuthBackend(object):
 
     def authenticate(self, username=None, password=None):
         user = User.get_user(username)
-        if user and check_password(password, user.password):
+        if user and user.check_password(password, user.password):
             return user
         if not user:
             if self.create_unknown_user:
