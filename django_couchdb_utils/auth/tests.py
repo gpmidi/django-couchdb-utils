@@ -1,7 +1,7 @@
 from django.contrib import auth as core_auth
 
-from django_couchdb_utils.auth import User
-from django_couchdb_utils.tests.utils import DbTester
+from .models import User
+from django_couchdb_utils.test.utils import DbTester
 
 
 class AuthTests(DbTester):

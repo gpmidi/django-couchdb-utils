@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from django_couchdb_utils.sessions import Session, cleanup_sessions
+from .models import Session, cleanup_sessions
 from django_couchdb_utils.test.utils import DbTester
 
 

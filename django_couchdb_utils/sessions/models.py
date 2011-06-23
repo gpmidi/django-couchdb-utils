@@ -16,3 +16,10 @@ class Session(Document):
             return r.first()
         except ResourceNotFound:
             return None
+
+
+def cleanup_sessions(remove_all=False):
+    r = Session.view('django_couchdb_utils/sessions_by_key', include_docs=True)
+    for session in r.all():
+        if remove_all or session.expire_date <= datetime.utcnow():
+            session.delete()

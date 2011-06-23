@@ -18,7 +18,3 @@ DATABASES = {
 Then execute the test runner in the standard way:
 $ python manage.py test django_couchdb_utils
 """
-
-
-from django_couchdb_utils.tests.auth import *
-from django_couchdb_utils.tests.sessions import *
