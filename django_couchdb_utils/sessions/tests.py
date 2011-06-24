@@ -3,8 +3,13 @@ from datetime import datetime, timedelta
 from .models import Session, cleanup_sessions
 from django_couchdb_utils.test.utils import DbTester
 
+from . import app_label
+
 
 class SessionTests(DbTester):
+    def setUp(self):
+        super(SessionTests, self).setUp(app_label)
+
     def test_store_and_retrieve_session(self):
 
         # couchdbkit doesn't preserve microseconds

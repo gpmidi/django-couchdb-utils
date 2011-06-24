@@ -3,8 +3,13 @@ from django.contrib import auth as core_auth
 from .models import User
 from django_couchdb_utils.test.utils import DbTester
 
+from . import app_label
+
 
 class AuthTests(DbTester):
+    def setUp(self):
+        super(AuthTests, self).setUp(app_label)
+
     def test_user_registration(self):
         data = {
             'username': 'frank',

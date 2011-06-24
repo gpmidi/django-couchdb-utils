@@ -20,6 +20,6 @@ class TestHelper(TestCase):
 
 class DbTester(TestHelper):
     '''Keep separate from TestHelper to make it subclassable as library code'''
-    def setUp(self):
-        db = get_db('django_couchdb_utils_auth')
+    def setUp(self, app_label):
+        db = get_db(app_label)
         db.flush()
