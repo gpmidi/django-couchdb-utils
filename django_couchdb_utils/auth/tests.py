@@ -8,7 +8,7 @@ from . import app_label
 
 class AuthTests(DbTester):
     def setUp(self):
-        super(AuthTests, self).setUp(app_label)
+        super(self.__class__, self).setUp(app_label)
 
     def test_user_registration(self):
         data = {

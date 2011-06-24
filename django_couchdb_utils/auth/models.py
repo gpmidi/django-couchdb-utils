@@ -41,7 +41,7 @@ class User(Document):
             raise Exception('This username is already in use.')
         if not self.check_email():
             raise Exception('This email address is already in use.')
-        return super(User, self).save()
+        return super(self.__class__, self).save()
 
 
     def check_username(self):

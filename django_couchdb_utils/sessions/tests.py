@@ -8,7 +8,7 @@ from . import app_label
 
 class SessionTests(DbTester):
     def setUp(self):
-        super(SessionTests, self).setUp(app_label)
+        super(self.__class__, self).setUp(app_label)
 
     def test_store_and_retrieve_session(self):
 
