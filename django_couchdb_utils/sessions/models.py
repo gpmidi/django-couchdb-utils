@@ -3,13 +3,15 @@ from datetime import datetime
 from couchdbkit.ext.django.schema import *
 from couchdbkit.exceptions import ResourceNotFound
 
+from . import app_label
+
 class Session(Document):
     session_key  = StringProperty()
     session_data = StringProperty()
     expire_date  = DateTimeProperty()
 
     class Meta:
-        app_label = "django_couchdb_utils_sessions"
+        app_label = app_label
 
     @classmethod
     def get_session(cls, session_key):

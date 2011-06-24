@@ -7,6 +7,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
 import random
 
+from . import app_label
+
 
 class SiteProfileNotAvailable(Exception):
     pass
@@ -25,7 +27,7 @@ class User(Document):
     date_joined   = DateTimeProperty(default=datetime.utcnow)
 
     class Meta:
-        app_label = "django_couchdb_utils_auth"
+        app_label = app_label
 
     def __unicode__(self):
         return self.username
@@ -161,3 +163,27 @@ class User(Document):
             return view.iterator()
         except ResourceNotFound:
             return []
+
+
+class UserProfile(Document):
+    '''This is a dummy class to demonstrate the use of a UserProfile.
+    It's used in tests. To use a UserProfile in your app, don't subclass this,
+    define your own class, use a permanent view and set AUTH_PROFILE_MODULE in
+    settings.py to point to your class.'''
+    user_id = StringProperty()
+    age = IntegerProperty()
+
+    class Meta:
+        app_label = app_label
+
+    @classmethod
+    def get_userprofile(cls, user_id):
+        # With a permanent view:
+        # r = cls.view('%s/userprofile_by_userid' % cls._meta.app_label,
+        #              key=user_id, include_docs=True)
+
+        design_doc = {
+            "map": """function(doc) { if (doc.doc_type == "UserProfile") { emit(doc.user_id, doc); }}"""
+        }
+        r = cls.temp_view(design_doc, key=user_id)
+        return r.first() if r else None

@@ -1,6 +1,7 @@
 from django.contrib import auth as core_auth
+from django.conf import settings
 
-from .models import User
+from .models import User, UserProfile
 from django_couchdb_utils.test.utils import DbTester
 
 from . import app_label
@@ -71,6 +72,28 @@ class AuthTests(DbTester):
         user = core_auth.authenticate(**authdata)
 
         self.assertIsNotNone(user)
+
+    def test_user_profile(self):
+        settings.AUTH_PROFILE_MODULE = 'auth.UserProfile'
+
+        data = {
+            'username': 'frank',
+            'password': 'secret',
+        }
+        user = User(**data)
+        user.save()
+
+        profiledata = {
+            'user_id': user.get_id,
+            'age': 7,
+        }
+        userprofile = UserProfile(**profiledata)
+        userprofile.save()
+
+        userprofile = UserProfile.get_userprofile(profiledata['user_id'])
+        self.assertIsNotNone(userprofile)
+
+        self.assertEqual(user.get_profile().age, profiledata['age'])
 
 
 ### XXX older doctest code
