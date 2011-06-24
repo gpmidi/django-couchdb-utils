@@ -161,4 +161,3 @@ class User(Document):
             return view.iterator()
         except ResourceNotFound:
             return []
-
