@@ -56,6 +56,19 @@ class AuthTests(DbTester):
         self.assertExcMsg(Exception, 'This email address is already in use.',
                           user2.save)
 
+    def test_user_change_email(self):
+        data = {
+            'username': 'frank',
+            'password': 'secret',
+            'email': 'user@host.com',
+        }
+        user = User(**data)
+        user.save()
+
+        user = User.get_user_by_email(data['email'])
+        user.email = 'notme@otherhost.com'
+        user.save()
+
     def test_user_authentication(self):
         authdata = {
             'username': 'mickey',
