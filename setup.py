@@ -1,46 +1,46 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# Setup script for django-couchdb-utils
 
 from distutils.core import setup
-import os
 
-# Compile the list of packages available, because distutils doesn't have
-# an easy way to do this.
-packages, data_files = [], []
-root_dir = os.path.dirname(__file__)
-if root_dir:
-    os.chdir(root_dir)
+import re
 
-for dirpath, dirnames, filenames in os.walk('django_couchdb_utils'):
-    # Ignore dirnames that start with '.'
-    for i, dirname in enumerate(dirnames):
-        if dirname.startswith('.'): del dirnames[i]
-    if '__init__.py' in filenames:
-        pkg = dirpath.replace(os.path.sep, '.')
-        if os.path.altsep:
-            pkg = pkg.replace(os.path.altsep, '.')
-        packages.append(pkg)
-    elif filenames:
-        prefix = dirpath[len('django_couchdb_utils/'):] # Strip "django_couchdb_utils/"
-        for f in filenames:
-            data_files.append(os.path.join(prefix, f))
+src_main = open('django_couchdb_utils/__init__.py').read()
+metadata = dict(re.findall("__([a-z]+)__ = '([^']+)'", src_main))
+docstrings = re.findall('"""(.*?)"""', src_main, re.DOTALL)
 
+# How is the package going to be called?
+PACKAGE = 'django_couchdb_utils'
 
-setup(name='django-couchdb-utils',
-      version='0.1',
-      description='A CouchDB-based replacement for some django.contrib modules',
-      author=u'Stefan Kögl',
-      author_email='stefan@skoegl.net',
-      url='https://github.com/stefankoegl/django-couchdb-utils',
-      download_url='https://github.com/stefankoegl/django-couchdb-utils',
-      package_dir={'django_couchdb_utils': 'django_couchdb_utils'},
-      packages=packages,
-      package_data={'django_couchdb_utils': data_files},
-      classifiers=['Development Status :: 4 - Beta',
-                   'Environment :: Web Environment',
-                   'Framework :: Django',
-                   'Intended Audience :: Developers',
-                   'Operating System :: OS Independent',
-                   'Programming Language :: Python',
-                   'Topic :: Software Development :: Libraries :: Python Modules',
-                   'Topic :: Utilities'],
-      )
+# List the modules that need to be installed/packaged
+PACKAGES = (
+        'django_couchdb_utils',
+        'django_couchdb_utils.auth',
+        'django_couchdb_utils.cache',
+        'django_couchdb_utils.email',
+        'django_couchdb_utils.openid_consumer',
+        'django_couchdb_utils.sessions',
+        'django_couchdb_utils.test',
+)
+
+# Metadata fields extracted from the main file
+AUTHOR_EMAIL = metadata['author']
+VERSION = metadata['version']
+WEBSITE = metadata['website']
+LICENSE = metadata['license']
+DESCRIPTION = docstrings[0]
+
+# Extract name and e-mail ("Firstname Lastname <mail@example.org>")
+AUTHOR, EMAIL = re.match(r'(.*) <(.*)>', AUTHOR_EMAIL).groups()
+
+setup(name=PACKAGE,
+      version=VERSION,
+      description=DESCRIPTION,
+      author=AUTHOR,
+      author_email=EMAIL,
+      license=LICENSE,
+      url=WEBSITE,
+      packages=PACKAGES,
+      download_url='http://pypi.python.org/packages/source/' + \
+              PACKAGE[0] + '/' + PACKAGE + \
+              '/'+PACKAGE+'-'+VERSION+'.tar.gz')
