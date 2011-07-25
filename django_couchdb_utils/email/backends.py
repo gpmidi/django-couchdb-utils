@@ -1,6 +1,8 @@
 from django.core import mail
 from django.core.mail.backends.base import BaseEmailBackend
 from django.conf import settings
+from django_couchdb_utils.email.models import EmailMessage
+
 
 DEFAULT_WRAPPED_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 COPY_PROPERTIES=('subject', 'body', 'from_email', 'to', 'cc', 'bcc', 'headers')
