@@ -23,6 +23,11 @@ PACKAGES = (
         'django_couchdb_utils.test',
 )
 
+PACKAGE_DATA = {}
+for package in PACKAGES:
+    PACKAGE_DATA[package] = ['_design/views/*/*.js']
+
+
 # Metadata fields extracted from the main file
 AUTHOR_EMAIL = metadata['author']
 VERSION = metadata['version']
@@ -41,6 +46,7 @@ setup(name=PACKAGE,
       license=LICENSE,
       url=WEBSITE,
       packages=PACKAGES,
+      package_data=PACKAGE_DATA,
       download_url='http://pypi.python.org/packages/source/' + \
               PACKAGE[0] + '/' + PACKAGE + \
               '/'+PACKAGE+'-'+VERSION+'.tar.gz')

@@ -1,4 +1,4 @@
-recursive-include  django_couchdb_utils/*/_design/ *.js
+recursive-include django_couchdb_utils/*/_design/views/*/*.js
 include CONTRIBUTORS.txt
 include LICENSE.txt
 include README.rst
