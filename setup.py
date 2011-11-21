@@ -21,6 +21,7 @@ PACKAGES = (
         'django_couchdb_utils.openid_consumer',
         'django_couchdb_utils.sessions',
         'django_couchdb_utils.test',
+        'django_couchdb_utils.registration',
 )
 
 PACKAGE_DATA = {}

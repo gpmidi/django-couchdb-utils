@@ -1,5 +1,0 @@
-A big thanks to all the contributors of the project listed alphabetically:
-
-* Martin Matusiak
-* Stefan Kögl
-* Thejaswi Puthraya
