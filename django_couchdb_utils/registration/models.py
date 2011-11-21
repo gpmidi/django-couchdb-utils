@@ -7,7 +7,8 @@ from django.template.loader import render_to_string
 from django.utils.hashcompat import sha_constructor
 
 from couchdbkit.ext.django.schema import *
-from django_couchdb_utils.auth.models import User
+
+from ..auth.models import User
 
 
 SHA1_RE = re.compile('^[a-f0-9]{40}$')
@@ -169,7 +170,7 @@ class User(User):
 
 
     class Meta:
-        app_label = 'registration_couchdb'
+        app_label = 'django_couchdb_utils_registration'
 
 
     @classmethod
