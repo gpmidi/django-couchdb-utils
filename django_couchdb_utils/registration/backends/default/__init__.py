@@ -43,7 +43,7 @@ class DefaultBackend(object):
     an instance of ``registration.models.RegistrationProfile``. See
     that model and its custom manager for full documentation of its
     fields and supported operations.
-    
+
     """
     def register(self, request, **kwargs):
         """
@@ -92,14 +92,14 @@ class DefaultBackend(object):
 
         * If ``REGISTRATION_OPEN`` is both specified and set to
           ``False``, registration is not permitted.
-        
+
         """
         return getattr(settings, 'REGISTRATION_OPEN', True)
 
     def get_form_class(self, request):
         """
         Return the default form class used for user registration.
-        
+
         """
         return RegistrationForm
 
@@ -107,7 +107,7 @@ class DefaultBackend(object):
         """
         Return the name of the URL to redirect to after successful
         user registration.
-        
+
         """
         return ('registration_complete', (), {})
 
@@ -115,6 +115,6 @@ class DefaultBackend(object):
         """
         Return the name of the URL to redirect to after successful
         account activation.
-        
+
         """
         return ('registration_activation_complete', (), {})

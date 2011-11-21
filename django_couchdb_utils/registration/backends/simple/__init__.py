@@ -12,12 +12,12 @@ class SimpleBackend(object):
     workflow: a user supplies a username, email address and password
     (the bare minimum for a useful account), and is immediately signed
     up and logged in.
-    
+
     """
     def register(self, request, **kwargs):
         """
         Create and immediately log in a new user.
-        
+
         """
         username, email, password = kwargs['username'], kwargs['email'], kwargs['password1']
         user = User()
@@ -25,7 +25,7 @@ class SimpleBackend(object):
         user.email = email
         user.set_password(password)
         user.save()
-        
+
         # authenticate() always has to be called before login(), and
         # will return the user we just created.
         new_user = authenticate(username=username, password=password)
@@ -46,7 +46,7 @@ class SimpleBackend(object):
 
         * If ``REGISTRATION_OPEN`` is both specified and set to
           ``False``, registration is not permitted.
-        
+
         """
         return getattr(settings, 'REGISTRATION_OPEN', True)
 
@@ -56,7 +56,7 @@ class SimpleBackend(object):
     def post_registration_redirect(self, request, user):
         """
         After registration, redirect to the user's account page.
-        
+
         """
         return (user.get_absolute_url(), (), {})
 
