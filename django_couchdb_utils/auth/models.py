@@ -158,11 +158,7 @@ class User(Document):
     @classmethod
     def all_users(cls):
         view = cls.view('%s/users_by_username' % cls._meta.app_label, include_docs=True)
-        try:
-            view.count()
-            return view.iterator()
-        except ResourceNotFound:
-            return []
+        return view.iterator()
 
 
 class UserProfile(Document):
