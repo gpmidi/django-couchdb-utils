@@ -45,10 +45,10 @@ class AuthConsumer(SessionConsumer, DjangoOpenidAuthConsumer):
             except signed.BadSignature:
                 return self.show_error(request, self.csrf_failed_message)
             # Associate openid with their account, if it isn't already
-            if not len(UserOpenidAssociation.view('%s/openid_view' % UserOpenidAssociation._meta.app_label, 
+            if not len(UserOpenidAssociation.view('%s/openid_view' % UserOpenidAssociation._meta.app_label,
                                                   key = openid), include_docs=True):
-                uoa = UserOpenidAssociation(user_id = request.user.id, 
-                                            openid  = openid, 
+                uoa = UserOpenidAssociation(user_id = request.user.id,
+                                            openid  = openid,
                                             created = datetime.datetime.now())
                 uoa["temp"] = True
                 uoa.store()
@@ -73,7 +73,7 @@ class AuthConsumer(SessionConsumer, DjangoOpenidAuthConsumer):
                         message = self.associate_tampering_message
                     else:
                         # It matches! Delete the OpenID relationship
-                        row = UserOpenidAssociation.view('%s/openid_view' % UserOpenidAssociation._meta.app_label, 
+                        row = UserOpenidAssociation.view('%s/openid_view' % UserOpenidAssociation._meta.app_label,
                                                          key=todelete['openid'], include_docs=True).first()
                         if row.temp == True:
                             row.delete()
@@ -84,7 +84,7 @@ class AuthConsumer(SessionConsumer, DjangoOpenidAuthConsumer):
                     message = self.associate_tampering_message
         # We construct a button to delete each existing association
         openids = []
-        for association in UserOpenidAssociation.view('%s/openid_view' % UserOpenidAssociation._meta.app_label, 
+        for association in UserOpenidAssociation.view('%s/openid_view' % UserOpenidAssociation._meta.app_label,
                                                       include_docs=True):
             openids.append({
                 'openid': association['openid'],
@@ -105,18 +105,18 @@ class AuthConsumer(SessionConsumer, DjangoOpenidAuthConsumer):
 
 
     def lookup_openid(self, request, identity_url):
-        openid = UserOpenidAssociation.view('%s/openid_view' % UserOpenidAssociation._meta.app_label, 
+        openid = UserOpenidAssociation.view('%s/openid_view' % UserOpenidAssociation._meta.app_label,
                                             key=identity_url, include_docs=True).first()
         if openid:
-            return User.view('%s/users_by_username' % User._meta.app_label, 
+            return User.view('%s/users_by_username' % User._meta.app_label,
                              key=openid['user_id'], include_docs=True).all()
 
     def lookup_users_by_email(self, email):
-        return User.view('%s/users_by_email' % User._meta.app_label, 
+        return User.view('%s/users_by_email' % User._meta.app_label,
                          key=email, include_docs=True).first()
 
     def lookup_user_by_username(self, username):
-        return User.view('%s/users_by_username' % User._meta.app_label, 
+        return User.view('%s/users_by_username' % User._meta.app_label,
                          key=username, include_docs=True).first()
 
     def lookup_user_by_id(self, id):

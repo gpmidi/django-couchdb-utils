@@ -15,7 +15,7 @@ class RegistrationConsumer(AuthConsumer, DjangoOpenIDRegistrationConsumer):
     def user_is_unconfirmed(self, user):
         count = 0
         try:
-            count = User.view('%s/users_by_username' % User._meta.app_label, 
+            count = User.view('%s/users_by_username' % User._meta.app_label,
                               key=user.username, include_docs=True).count()
         except ResourceNotFound:
             return False
@@ -40,10 +40,10 @@ class RegistrationConsumer(AuthConsumer, DjangoOpenIDRegistrationConsumer):
         )
         # Set OpenID, if one has been associated
         if openid:
-            uoa = UserOpenidAssociation(user_id = user.username, 
-                                        openid  = openid, 
+            uoa = UserOpenidAssociation(user_id = user.username,
+                                        openid  = openid,
                                         created = datetime.now())
-            uoa.store()            
+            uoa.store()
         # Set password, if one has been specified
         password = data.get('password')
         if password:
@@ -62,7 +62,7 @@ class RegistrationConsumer(AuthConsumer, DjangoOpenIDRegistrationConsumer):
         username_exists = True
         while username_exists:
             try:
-                username_exists = User.view('%s/users_by_username' % User._meta.app_label, 
+                username_exists = User.view('%s/users_by_username' % User._meta.app_label,
                                             key=nickname, include_docs=True).count()
             except ResourceNotFound:
                 username_exists = False
@@ -123,7 +123,7 @@ class RegistrationConsumer(AuthConsumer, DjangoOpenIDRegistrationConsumer):
         if self.user_is_unconfirmed(user):
             # Confirm them
             try:
-                user = User.view('%s/users_by_username' % User._meta.app_label, 
+                user = User.view('%s/users_by_username' % User._meta.app_label,
                                  key=user.username, include_docs=True).first()
             except ResourceNotFound:
                 user = None

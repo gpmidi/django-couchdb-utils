@@ -138,8 +138,8 @@ class User(Document):
     def get_user(cls, username, is_active=True):
         param = {"key": username}
 
-        r = cls.view('%s/users_by_username' % cls._meta.app_label, 
-                     include_docs=True, 
+        r = cls.view('%s/users_by_username' % cls._meta.app_label,
+                     include_docs=True,
                      **param).first()
         if r and r.is_active:
             return r
@@ -149,7 +149,7 @@ class User(Document):
     def get_user_by_email(cls, email, is_active=True):
         param = {"key": email}
 
-        r = cls.view('%s/users_by_email' % cls._meta.app_label, 
+        r = cls.view('%s/users_by_email' % cls._meta.app_label,
                      include_docs=True, **param).first()
         if r and r.is_active:
             return r
