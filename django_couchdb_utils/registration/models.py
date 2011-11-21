@@ -41,11 +41,11 @@ def activate_user(activation_key):
 
     user = User.get_by_key(activation_key)
 
-    if not user.activation_key_expired():
-        del user.activation_key
-        user.is_active = True
-        user.save()
-        return user
+    user.activation_key = None
+    user.is_active = True
+    user.save()
+    return user
+
 
 def create_inactive_user(username, email, password,
                          site, send_email=True):
