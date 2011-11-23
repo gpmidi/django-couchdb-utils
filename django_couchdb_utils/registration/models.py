@@ -132,7 +132,9 @@ def delete_expired_users():
     for user in User.all_users():
         if user.activation_key_expired():
             if not user.is_active:
-                user.delete()
+                delete = yield user
+                if delete:
+                    user.delete()
 
 
 def get_migration_user_data(user):

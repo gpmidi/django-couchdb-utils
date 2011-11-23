@@ -157,7 +157,9 @@ class User(Document):
 
     @classmethod
     def all_users(cls):
-        view = cls.view('%s/users_by_username' % cls._meta.app_label, include_docs=True)
+        view = cls.view('django_couchdb_utils_auth/users_by_username',
+                include_docs=True,
+            )
         return view.iterator()
 
 

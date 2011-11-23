@@ -22,6 +22,8 @@ PACKAGES = (
         'django_couchdb_utils.sessions',
         'django_couchdb_utils.test',
         'django_couchdb_utils.registration',
+        'django_couchdb_utils.registration.management',
+        'django_couchdb_utils.registration.management.commands',
 )
 
 PACKAGE_DATA = {}
