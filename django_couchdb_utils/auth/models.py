@@ -140,6 +140,7 @@ class User(Document):
 
         r = cls.view('%s/users_by_username' % cls._meta.app_label,
                      include_docs=True,
+                     reduce=False,
                      **param).first()
         if r and r.is_active:
             return r
@@ -159,8 +160,17 @@ class User(Document):
     def all_users(cls):
         view = cls.view('django_couchdb_utils_auth/users_by_username',
                 include_docs=True,
+                reduce=False,
             )
         return view.iterator()
+
+
+    @classmethod
+    def count(cls):
+        view = cls.view('django_couchdb_utils_auth/users_by_username',
+                reduce=True,
+            )
+        return view.first()['value']
 
 
 class UserProfile(Document):

@@ -16,6 +16,7 @@ class RegistrationConsumer(AuthConsumer, DjangoOpenIDRegistrationConsumer):
         count = 0
         try:
             count = User.view('%s/users_by_username' % User._meta.app_label,
+                              reduce=False,
                               key=user.username, include_docs=True).count()
         except ResourceNotFound:
             return False
@@ -63,6 +64,7 @@ class RegistrationConsumer(AuthConsumer, DjangoOpenIDRegistrationConsumer):
         while username_exists:
             try:
                 username_exists = User.view('%s/users_by_username' % User._meta.app_label,
+                                            reduce=False,
                                             key=nickname, include_docs=True).count()
             except ResourceNotFound:
                 username_exists = False
@@ -124,6 +126,7 @@ class RegistrationConsumer(AuthConsumer, DjangoOpenIDRegistrationConsumer):
             # Confirm them
             try:
                 user = User.view('%s/users_by_username' % User._meta.app_label,
+                                 reduce=False,
                                  key=user.username, include_docs=True).first()
             except ResourceNotFound:
                 user = None
