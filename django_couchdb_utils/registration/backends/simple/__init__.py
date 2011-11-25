@@ -2,8 +2,8 @@ from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 
-from registration_couchdb.forms import RegistrationForm
-from registration_couchdb.models import User
+from ...forms import RegistrationForm
+from ...models import User
 
 
 class SimpleBackend(object):

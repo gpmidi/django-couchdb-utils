@@ -177,7 +177,7 @@ class User(User):
 
     @classmethod
     def get_by_key(cls, key):
-        r = cls.view('registration_couchdb/users_by_activationkey',
+        r = cls.view('django_couchdb_utils_registration/users_by_activationkey',
                 key          = key,
                 include_docs = True,
             )

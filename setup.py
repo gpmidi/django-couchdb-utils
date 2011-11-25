@@ -20,10 +20,15 @@ PACKAGES = (
         'django_couchdb_utils.email',
         'django_couchdb_utils.openid_consumer',
         'django_couchdb_utils.sessions',
+        'django_couchdb_utils.sessions.management',
+        'django_couchdb_utils.sessions.management.commands',
         'django_couchdb_utils.test',
         'django_couchdb_utils.registration',
         'django_couchdb_utils.registration.management',
         'django_couchdb_utils.registration.management.commands',
+        'django_couchdb_utils.registration.backends',
+        'django_couchdb_utils.registration.backends.default',
+        'django_couchdb_utils.registration.backends.simple',
 )
 
 PACKAGE_DATA = {}

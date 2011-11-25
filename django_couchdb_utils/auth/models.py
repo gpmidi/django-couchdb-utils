@@ -43,7 +43,7 @@ class User(Document):
             raise Exception('This username is already in use.')
         if not self.check_email():
             raise Exception('This email address is already in use.')
-        return super(self.__class__, self).save()
+        return super(User, self).save()
 
 
     def check_username(self):
@@ -138,11 +138,11 @@ class User(Document):
     def get_user(cls, username, is_active=True):
         param = {"key": username}
 
-        r = cls.view('%s/users_by_username' % cls._meta.app_label,
+        r = cls.view('django_couchdb_utils_auth/users_by_username',
                      include_docs=True,
                      reduce=False,
                      **param).first()
-        if r and r.is_active:
+        if r and (not is_active or r.is_active):
             return r
         return None
 
@@ -150,9 +150,9 @@ class User(Document):
     def get_user_by_email(cls, email, is_active=True):
         param = {"key": email}
 
-        r = cls.view('%s/users_by_email' % cls._meta.app_label,
+        r = cls.view('django_couchdb_utils_auth/users_by_email',
                      include_docs=True, **param).first()
-        if r and r.is_active:
+        if r and (not is_active or r.is_active):
             return r
         return None
 

@@ -9,12 +9,13 @@ class CouchDBAuthBackend(object):
     create_unknown_user = False
 
     def authenticate(self, username=None, password=None):
-        user = User.get_user(username)
+        user_cls = get_user_class()
+        user = user_cls.get_user(username)
         if user and check_password(password, user.password):
             return user
         if not user:
             if self.create_unknown_user:
-                user = User(username)
+                user = user_cls(username)
                 user.set_password(password)
                 user.save()
                 return user
@@ -22,7 +23,19 @@ class CouchDBAuthBackend(object):
                 return None
 
     def get_user(self, username):
-        user = User.get_user(username)
+        user_cls = get_user_class()
+        user = user_cls.get_user(username)
         if not user:
             raise KeyError
         return user
+
+
+def get_user_class():
+    if not hasattr(settings, 'USER_CLASS'):
+        return User
+
+    cls_name = settings.USER_CLASS
+    index = cls_name.rfind('.')
+    mod, cls = cls_name[:index], cls_name[index+1:]
+    m = __import__(mod, fromlist=[cls])
+    return getattr(m, cls)

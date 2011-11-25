@@ -21,7 +21,7 @@ up your own URL patterns for these views instead.
 from django.conf.urls.defaults import *
 from django.views.generic.simple import direct_to_template
 
-from registration_couchdb.views import activate, register
+from ....views import activate, register
 
 
 urlpatterns = patterns('',
