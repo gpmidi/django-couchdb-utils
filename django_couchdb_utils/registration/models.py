@@ -7,6 +7,8 @@ from django.template.loader import render_to_string
 from django.utils.hashcompat import sha_constructor
 
 from couchdbkit.ext.django.schema import *
+from couchdbkit import ResourceConflict
+
 
 from ..auth.models import User
 
@@ -41,9 +43,18 @@ def activate_user(activation_key):
 
     user = User.get_by_key(activation_key)
 
-    user.activation_key = None
-    user.is_active = True
-    user.save()
+    if not user:
+        return None
+
+    while True:
+        try:
+            user.activation_key = None
+            user.is_active = True
+            user.save()
+            break
+        except ResourceConflict:
+            user = User.get(user._id)
+
     return user
 
 
