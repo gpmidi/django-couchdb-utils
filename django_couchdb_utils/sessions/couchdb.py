@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.contrib.sessions.backends.base import SessionBase, CreateError
 from .models import Session
+from couchdbkit.exceptions import ResourceNotFound
 
 class SessionStore(SessionBase):
 
@@ -56,4 +57,9 @@ class SessionStore(SessionBase):
         session = Session.get_session(session_key)
         if not session:
             return None
-        session.delete()
+
+        try:
+            session.delete()
+
+        except ResourceNotFound:
+            pass
