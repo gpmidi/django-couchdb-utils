@@ -18,7 +18,7 @@ class User(Document):
     username      = StringProperty(required=True)
     first_name    = StringProperty(required=False)
     last_name     = StringProperty(required=False)
-    email         = StringProperty(required=False)
+    email         = StringProperty(required=True)
     password      = StringProperty(required=True)
     is_staff      = BooleanProperty(default=False)
     is_active     = BooleanProperty(default=True)
