@@ -36,22 +36,39 @@ class Command(BaseCommand):
 
         users = delete_expired_users()
 
-        user = users.next()
+        try:
+            user = users.next()
+        except StopIteration:
+            return
 
         while True:
             delete = decide_delete(user)
 
             if delete:
-                print 'Deleting user {user} {user_id} (registered {registered}).'.format(
-                    user=user, user_id=user._id, registered=user.date_joined)
+                print 'Deleting user {user} {user_id} (registered {registered}, last login {last_login}).'.format(
+                    user=user, user_id=user._id, registered=user.date_joined,
+                    last_login=user.last_login)
 
-            user = users.send(delete)
+            else:
+                user.is_active = True
+                user.activation_key = None
+                user.save()
+
+            try:
+                user = users.send(delete)
+            except StopIteration:
+                break
 
 
     def read_input(self, user):
         while True:
-            answer = raw_input('Deletin user {user} {user_id} (registered {registered})? [y|N] '.format(
-                    user=user, user_id=user._id, registered=user.date_joined))
+
+            if user.date_joined == user.last_login:
+                return True
+
+            answer = raw_input('Delete user {user} {user_id} (registered {registered}, last login {last_login})? [y|N] '.format(
+                    user=user, user_id=user._id, registered=user.date_joined,
+                    last_login=user.last_login))
 
             delete = self.parse_input(answer)
             if delete is not None:

@@ -129,12 +129,27 @@ def delete_expired_users():
     be deleted.
 
     """
-    for user in User.all_users():
-        if user.activation_key_expired():
-            if not user.is_active:
-                delete = yield user
-                if delete:
-                    user.delete()
+
+    users = User.view('django_couchdb_utils_registration/unactivated_users',
+            include_docs = True,
+            limit        = 1000,
+        )
+
+    for user in users:
+
+        if not user.activation_key_expired():
+            # users are sorted by registration date. If this user isn't
+            # expired, the following can't be either
+            break
+
+        if user.is_active:
+            user.activation_key = None
+            user.save()
+
+        else:
+            delete = yield user
+            if delete:
+                user.delete()
 
 
 def get_migration_user_data(user):
