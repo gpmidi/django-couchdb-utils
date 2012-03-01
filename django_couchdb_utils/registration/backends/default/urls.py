@@ -21,7 +21,7 @@ up your own URL patterns for these views instead.
 from django.conf.urls.defaults import *
 from django.views.generic.simple import direct_to_template
 
-from ....views import activate, register
+from django_couchdb_utils.registration.views import activate, register
 
 
 urlpatterns = patterns('',
@@ -49,5 +49,5 @@ urlpatterns = patterns('',
                            direct_to_template,
                            {'template': 'registration/registration_closed.html'},
                            name='registration_disallowed'),
-                       (r'', include('registration.auth_urls')),
+                       (r'', include('django_couchdb_utils.registration.auth_urls')),
                        )
