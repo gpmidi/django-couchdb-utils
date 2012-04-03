@@ -14,6 +14,13 @@ class SiteProfileNotAvailable(Exception):
     pass
 
 
+class UsernameException(Exception):
+    pass
+
+class PasswordException(Exception):
+    pass
+
+
 class User(Document):
     username      = StringProperty(required=True)
     first_name    = StringProperty(required=False)
@@ -40,9 +47,9 @@ class User(Document):
 
     def save(self):
         if not self.check_username():
-            raise Exception('The username %s is already in use.' % self.username)
+            raise UsernameException('The username %s is already in use.' % self.username)
         if not self.check_email():
-            raise Exception('The email address %s is already in use.' % self.email)
+            raise PasswordException('The email address %s is already in use.' % self.email)
         return super(User, self).save()
 
 
