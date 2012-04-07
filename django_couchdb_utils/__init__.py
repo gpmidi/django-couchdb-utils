@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 """ django-couchdb-utils provide implementations for various Django backend
 (auth, sessions, cache, etc) that use CouchDB (through couchdbkit) instead of
