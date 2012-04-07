@@ -1,11 +1,9 @@
-from django.contrib import auth as core_auth
+from django.contrib.auth import authenticate
 from django.conf import settings
 
-from .models import User, UserProfile
+from django_couchdb_utils.auth import app_label
 from django_couchdb_utils.test.utils import DbTester
-
-from . import app_label
-
+from django_couchdb_utils.auth.models import User, UserProfile
 
 class AuthTests(DbTester):
     def setUp(self):
@@ -32,12 +30,13 @@ class AuthTests(DbTester):
         data = {
             'username': 'frank',
             'password': 'secret',
+            'email': 'user@host.com',
         }
         user = User(**data)
         user.save()
 
         user2 = User(**data)
-        self.assertExcMsg(Exception, 'This username is already in use.',
+        self.assertExcMsg(Exception, 'The username %s is already in use.' % data.get('username'),
                           user2.save)
 
     def test_email_uniqueness(self):
@@ -53,7 +52,7 @@ class AuthTests(DbTester):
             'username': 'mark',
         })
         user2 = User(**data)
-        self.assertExcMsg(Exception, 'This email address is already in use.',
+        self.assertExcMsg(Exception, 'The email address %s is already in use.' % data.get('email'),
                           user2.save)
 
     def test_user_change_email(self):
@@ -73,17 +72,17 @@ class AuthTests(DbTester):
         authdata = {
             'username': 'mickey',
             'password': 'secret',
+            'email': 'user@host.com',
         }
         data = authdata.copy()
         data.update({
             'email': 'mickey@mice.com',
         })
         user = User(**data)
-        user.set_password(data['password'])
+        user.set_password(data.get('password'))
         user.save()
 
-        user = core_auth.authenticate(**authdata)
-
+        user = authenticate(username=authdata.get('username'), password=authdata.get('password'))
         self.assertIsNotNone(user)
 
     def test_user_profile(self):
@@ -92,6 +91,7 @@ class AuthTests(DbTester):
         data = {
             'username': 'frank',
             'password': 'secret',
+            'email': 'user@host.com',
         }
         user = User(**data)
         user.save()

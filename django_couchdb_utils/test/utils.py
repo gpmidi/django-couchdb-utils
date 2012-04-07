@@ -17,7 +17,6 @@ class AssertMixin(TestCase):
             callable(*args, **kw)
         self.assertEqual(cm.exception.message, msg)
 
-
 class DbTester(AssertMixin):
     '''Keep separate from TestHelper to make it subclassable as library code'''
     def setUp(self, app_label):

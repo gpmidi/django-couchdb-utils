@@ -2,7 +2,7 @@ from datetime import datetime
 from couchdbkit.ext.django.schema import *
 from couchdbkit.exceptions import ResourceNotFound
 from django.conf import settings
-from django.contrib.auth.models import get_hexdigest, check_password, UNUSABLE_PASSWORD
+from django.contrib.auth.hashers import make_password, check_password, UNUSABLE_PASSWORD
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
 import random
@@ -79,10 +79,7 @@ class User(Document):
         return True
 
     def set_password(self, raw_password):
-        algo = 'sha1'
-        salt = get_hexdigest(algo, str(random.random()), str(random.random()))[:5]
-        hsh = get_hexdigest(algo, salt, raw_password)
-        self.password = '%s$%s$%s' % (algo, salt, hsh)
+        self.password = make_password(raw_password)
 
     def check_password(self, raw_password):
         """
