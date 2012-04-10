@@ -2,13 +2,30 @@ from datetime import datetime
 from couchdbkit.ext.django.schema import *
 from couchdbkit.exceptions import ResourceNotFound
 from django.conf import settings
-from django.contrib.auth.hashers import make_password, check_password, UNUSABLE_PASSWORD
+from django import VERSION as django_version
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
 import random
 
 from . import app_label
 
+"""
+ django versions < 1.4 backward-compatibly patches
+"""
+
+if django_version[1] > 4:
+    # > 1.4.x
+    from django.contrib.auth.hashers import make_password, check_password, UNUSABLE_PASSWORD
+    def set_pasword(self, raw_password):
+        self.password = make_password(raw_password)
+else:
+    # > 1.4.x
+    from django.contrib.auth.models import get_hexdigest, check_password, UNUSABLE_PASSWORD
+    def set_password(self, raw_password):
+        algo = 'sha1'
+        salt = get_hexdigest(algo, str(random.random()), str(random.random()))[:5]
+        hsh = get_hexdigest(algo, salt, raw_password)
+        self.password = '%s$%s$%s' % (algo, salt, hsh)
 
 class SiteProfileNotAvailable(Exception):
     pass
@@ -79,7 +96,7 @@ class User(Document):
         return True
 
     def set_password(self, raw_password):
-        self.password = make_password(raw_password)
+        set_password(self, raw_password)
 
     def check_password(self, raw_password):
         """
