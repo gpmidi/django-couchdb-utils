@@ -13,13 +13,13 @@ from . import app_label
  django versions < 1.4 backward-compatibly patches
 """
 
-if django_version[1] > 4:
+if django_version[:2] > (1, 3):
     # > 1.4.x
     from django.contrib.auth.hashers import make_password, check_password, UNUSABLE_PASSWORD
-    def set_pasword(self, raw_password):
+    def set_password(self, raw_password):
         self.password = make_password(raw_password)
 else:
-    # > 1.4.x
+    # < 1.4.x
     from django.contrib.auth.models import get_hexdigest, check_password, UNUSABLE_PASSWORD
     def set_password(self, raw_password):
         algo = 'sha1'
