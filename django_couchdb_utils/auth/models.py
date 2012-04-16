@@ -7,7 +7,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
 import random
 
-from . import app_label
+from django_couchdb_utils.auth import app_label
 
 """
  django versions < 1.4 backward-compatibly patches
