@@ -14,7 +14,7 @@ from django_couchdb_utils.auth import app_label
 """
 
 if django_version[:2] > (1, 3):
-    # > 1.4.x
+    # > 1.3.x
     from django.contrib.auth.hashers import make_password, check_password, UNUSABLE_PASSWORD
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
@@ -27,12 +27,14 @@ else:
         hsh = get_hexdigest(algo, salt, raw_password)
         self.password = '%s$%s$%s' % (algo, salt, hsh)
 
+
 class SiteProfileNotAvailable(Exception):
     pass
 
 
 class UsernameException(Exception):
     pass
+
 
 class PasswordException(Exception):
     pass
