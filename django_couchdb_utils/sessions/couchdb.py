@@ -8,7 +8,7 @@ class SessionStore(SessionBase):
 
     def create(self):
         while True:
-            self.session_key = self._get_new_session_key()
+            self._session_key = self._get_new_session_key()
             self.modified = True
             self._session_cache = {}
             try:
