@@ -193,7 +193,7 @@ class User(Document):
         view = cls.view('django_couchdb_utils_auth/users_by_username',
                 reduce=True,
             )
-        return view.first()['value']
+        return view.first()['value'] if view else 0
 
 
 class UserProfile(Document):
