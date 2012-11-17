@@ -159,14 +159,19 @@ class User(Document):
 
     @classmethod
     def get_user(cls, username, is_active=True):
-        param = {"key": username}
+        user = None
 
-        r = cls.view('django_couchdb_utils_auth/users_by_username',
-                     include_docs=True,
-                     reduce=False,
-                     **param).first()
-        if r and (not is_active or r.is_active):
-            return r
+        if not user:
+            res = cls.view('django_couchdb_utils_auth/users_by_username',
+                     include_docs = True,
+                     reduce       = False,
+                     key          = username,
+                )
+            user = res.first()
+
+        if user and (not is_active or user.is_active):
+            return user
+
         return None
 
     @classmethod

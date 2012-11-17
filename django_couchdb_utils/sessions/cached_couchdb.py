@@ -29,7 +29,8 @@ class SessionStore(DBStore):
 
     def save(self, must_create=False):
         super(SessionStore, self).save(must_create)
-        cache.set(KEY_PREFIX + self.session_key, self._session,
+        if self.session_key:
+            cache.set(KEY_PREFIX + self.session_key, self._session,
                   settings.SESSION_COOKIE_AGE)
 
     def delete(self, session_key=None):

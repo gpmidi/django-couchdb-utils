@@ -8,8 +8,15 @@ class CouchDBAuthBackend(object):
     # Subclasses must override this attribute.
     create_unknown_user = False
 
+    supports_inactive_user = False
+
+
+    def __init__(self):
+        self._user_cls = None
+
+
     def authenticate(self, username=None, password=None):
-        user_cls = get_user_class()
+        user_cls = self.get_user_class()
         user = user_cls.get_user(username)
         if user and check_password(password, user.password):
             return user
@@ -23,19 +30,24 @@ class CouchDBAuthBackend(object):
                 return None
 
     def get_user(self, username):
-        user_cls = get_user_class()
+        user_cls = self.get_user_class()
         user = user_cls.get_user(username)
         if not user:
             raise KeyError
         return user
 
 
-def get_user_class():
-    if not hasattr(settings, 'USER_CLASS'):
-        return User
+    def get_user_class(self):
+        if self._user_cls is not None:
+            return self._user_cls
 
-    cls_name = settings.USER_CLASS
-    index = cls_name.rfind('.')
-    mod, cls = cls_name[:index], cls_name[index+1:]
-    m = __import__(mod, fromlist=[cls])
-    return getattr(m, cls)
+        if not hasattr(settings, 'USER_CLASS'):
+            return User
+
+        cls_name = settings.USER_CLASS
+        index = cls_name.rfind('.')
+        mod, cls = cls_name[:index], cls_name[index+1:]
+        m = __import__(mod, fromlist=[cls])
+        self._user_cls = getattr(m, cls)
+
+        return self._user_cls
