@@ -35,7 +35,7 @@ class SessionStore(DBStore):
 
     def delete(self, session_key=None):
         super(SessionStore, self).delete(session_key)
-        cache.delete(KEY_PREFIX + (session_key or self.session_key))
+        cache.delete(KEY_PREFIX + (session_key or self.session_key or ''))
 
     def flush(self):
         """
