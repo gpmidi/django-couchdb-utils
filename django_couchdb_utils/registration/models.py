@@ -4,7 +4,7 @@ import re
 
 from django.conf import settings
 from django.template.loader import render_to_string
-from django.utils.hashcompat import sha_constructor
+from hashlib import sha1
 
 from couchdbkit.ext.django.schema import *
 from couchdbkit import ResourceConflict
@@ -93,11 +93,11 @@ def create_profile(user):
     username and a random salt.
 
     """
-    salt = sha_constructor(str(random.random())).hexdigest()[:5]
+    salt = sha1(str(random.random())).hexdigest()[:5]
     username = user.username
     if isinstance(username, unicode):
         username = username.encode('utf-8')
-    user.activation_key = sha_constructor(salt+username).hexdigest()
+    user.activation_key = sha1(salt+username).hexdigest()
 
 
 def delete_expired_users():

@@ -2,7 +2,6 @@ from django.conf import settings
 from couchdbkit.ext.django.schema import *
 import time, base64, openid.store, urlparse
 from django_openid.models import DjangoOpenIDStore
-from django.utils.hashcompat import md5_constructor
 from openid.association import Association as OIDAssociation
 from couchdbkit.exceptions import ResourceNotFound
 
