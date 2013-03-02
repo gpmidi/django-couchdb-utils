@@ -64,7 +64,7 @@ class User(Document):
     def is_anonymous(self):
         return False
 
-    def save(self):
+    def save(self, update_fields=[]):
         if not self.check_username():
             raise UsernameException('The username %s is already in use.' % self.username)
         if not self.check_email():
@@ -88,6 +88,7 @@ class User(Document):
         return self.username
 
     id = property(_get_id)
+    pk = id
 
     def get_full_name(self):
         "Returns the first_name plus the last_name, with a space in between."
