@@ -15,7 +15,7 @@ class AssertMixin(TestCase):
 
         with self.assertRaises(exc) as cm:
             callable(*args, **kw)
-        self.assertEqual(cm.exception.message, msg)
+        self.assertEqual(str(cm.exception), msg)
 
 class DbTester(AssertMixin):
     '''Keep separate from TestHelper to make it subclassable as library code'''

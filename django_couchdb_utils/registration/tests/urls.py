@@ -11,7 +11,7 @@ handled.
 """
 
 from django.conf.urls import *
-from django.views.generic.simple import direct_to_template
+from django.views.generic.base import TemplateView
 
 from registration.views import activate
 from registration.views import register
@@ -62,8 +62,7 @@ urlpatterns = patterns('',
                        # Set up a pattern which will correspond to the
                        # custom 'disallowed_url' above.
                        url(r'^custom-disallowed/$',
-                           direct_to_template,
-                           {'template': 'registration/registration_closed.html'},
+                           TemplateView.as_view(template_name='registration/registration_closed.html'),
                            name='registration_test_custom_disallowed'),
                        # Test the 'register' view with custom redirect
                        # on successful registration.
