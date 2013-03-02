@@ -11,7 +11,7 @@ class AuthTests(DbTester):
 
     def test_user_registration(self):
         data = {
-            'username': 'frank',
+            'username': 'frank-1',
             'password': 'secret',
             'email': 'user@host.com',
         }
@@ -28,7 +28,7 @@ class AuthTests(DbTester):
 
     def test_username_uniqueness(self):
         data = {
-            'username': 'frank',
+            'username': 'frank-2',
             'password': 'secret',
             'email': 'user@host.com',
         }
@@ -41,7 +41,7 @@ class AuthTests(DbTester):
 
     def test_email_uniqueness(self):
         data = {
-            'username': 'frank',
+            'username': 'frank-3',
             'password': 'secret',
             'email': 'user@host.com',
         }
@@ -57,7 +57,7 @@ class AuthTests(DbTester):
 
     def test_user_change_email(self):
         data = {
-            'username': 'frank',
+            'username': 'frank-4',
             'password': 'secret',
             'email': 'user@host.com',
         }
@@ -89,7 +89,7 @@ class AuthTests(DbTester):
         settings.AUTH_PROFILE_MODULE = 'auth.UserProfile'
 
         data = {
-            'username': 'frank',
+            'username': 'frank-5',
             'password': 'secret',
             'email': 'user@host.com',
         }
