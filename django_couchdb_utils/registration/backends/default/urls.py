@@ -18,7 +18,7 @@ up your own URL patterns for these views instead.
 """
 
 
-from django.conf.urls.defaults import *
+from django.conf.urls import *
 from django.views.generic.simple import direct_to_template
 
 from django_couchdb_utils.registration.views import activate, register
