@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.models import check_password
 
-from .models import User
+from django_couchdb_utils.auth.models import User
 
 class CouchDBAuthBackend(object):
     # Create a User object if not exists.

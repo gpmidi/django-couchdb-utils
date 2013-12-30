@@ -1,31 +1,37 @@
 from datetime import datetime
+import random
+
 from couchdbkit.ext.django.schema import *
 from couchdbkit.exceptions import ResourceNotFound
+
 from django.conf import settings
 from django import VERSION as django_version
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
-import random
+from django.contrib.auth.hashers import make_password, check_password
 
 from django_couchdb_utils.auth import app_label
 
 """
- django versions < 1.4 backward-compatibly patches
+ django versions < 1.6 backward-compatibly patches
 """
 
-if django_version[:2] > (1, 3):
-    # > 1.3.x
-    from django.contrib.auth.hashers import make_password, check_password, UNUSABLE_PASSWORD
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
+if django_version[:2] > (1, 5):
+    # > 1.5.x
+    from django.contrib.auth.hashers import is_password_usable
+
+    def get_unusable_password():
+        return make_password(None)
+
 else:
-    # < 1.4.x
-    from django.contrib.auth.models import get_hexdigest, check_password, UNUSABLE_PASSWORD
-    def set_password(self, raw_password):
-        algo = 'sha1'
-        salt = get_hexdigest(algo, str(random.random()), str(random.random()))[:5]
-        hsh = get_hexdigest(algo, salt, raw_password)
-        self.password = '%s$%s$%s' % (algo, salt, hsh)
+    # < 1.6.x
+    from django.contrib.auth.models import UNUSABLE_PASSWORD
+
+    def is_password_usable(pwd):
+        return pwd != UNUSABLE_PASSWORD
+
+    def get_unusable_password():
+        return UNUSABLE_PASSWORD
 
 
 class SiteProfileNotAvailable(Exception):
@@ -90,6 +96,10 @@ class User(Document):
     id = property(_get_id)
     pk = id
 
+    @property
+    def pk(self):
+        return self.username
+
     def get_full_name(self):
         "Returns the first_name plus the last_name, with a space in between."
         full_name = u'%s %s' % (self.first_name, self.last_name)
@@ -99,7 +109,7 @@ class User(Document):
         return True
 
     def set_password(self, raw_password):
-        set_password(self, raw_password)
+        self.password = make_password(raw_password)
 
     def check_password(self, raw_password):
         """
@@ -110,10 +120,10 @@ class User(Document):
 
     def set_unusable_password(self):
         # Sets a value that will never be a valid hash
-        self.password = UNUSABLE_PASSWORD
+        self.password = get_unusable_password()
 
     def has_usable_password(self):
-        return self.password != UNUSABLE_PASSWORD
+        return is_password_usable(self.password)
 
     def email_user(self, subject, message, from_email=None):
         "Sends an e-mail to this User."
