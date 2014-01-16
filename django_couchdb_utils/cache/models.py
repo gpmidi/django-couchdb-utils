@@ -1,4 +1,4 @@
-from couchdb.ext.django.schema import *
+from couchdbkit.ext.django.schema import *
 from couchdbkit.exceptions import ResourceNotFound
 
 class CacheRow(Document):
