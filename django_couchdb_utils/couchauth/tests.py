@@ -1,9 +1,9 @@
 from django.contrib.auth import authenticate
 from django.conf import settings
 
-from django_couchdb_utils.auth import app_label
+from django_couchdb_utils.couchauth import app_label
 from django_couchdb_utils.test.utils import DbTester
-from django_couchdb_utils.auth.models import User, UserProfile
+from django_couchdb_utils.couchauth.models import User, UserProfile
 
 class AuthTests(DbTester):
     def setUp(self):
@@ -86,7 +86,7 @@ class AuthTests(DbTester):
         self.assertIsNotNone(user)
 
     def test_user_profile(self):
-        settings.AUTH_PROFILE_MODULE = 'auth.UserProfile'
+        settings.AUTH_PROFILE_MODULE = 'couchauth.UserProfile'
 
         data = {
             'username': 'frank-5',
@@ -112,7 +112,7 @@ class AuthTests(DbTester):
 ### XXX older doctest code
 
 BASIC_TESTS = """
->>> from django_couchdb_utils.auth.models import User
+>>> from django_couchdb_utils.couchauth.models import User
 >>> from django.contrib.auth.models import UNUSABLE_PASSWORD
 >>> u = User(username='testuser', email='test@example.com', password='testpw')
 >>> u.set_password('testpw')

@@ -7,3 +7,5 @@ MANIFEST
 *.pyc
 *.swo
 *.swp
+
+*.egg-info

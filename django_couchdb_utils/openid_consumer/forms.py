@@ -1,5 +1,5 @@
 from django import forms
-from django_couchdb_utils.auth.models import User
+from django_couchdb_utils.couchauth.models import User
 from django_openid.forms import RegistrationForm as DjangoOpenidRegistrationForm, \
                                 RegistrationFormPasswordConfirm as DjangoOpenidRegistrationFormPasswordConfirm
 from couchdbkit.exceptions import ResourceNotFound

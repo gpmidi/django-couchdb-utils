@@ -15,7 +15,7 @@ PACKAGE = 'django_couchdb_utils'
 # List the modules that need to be installed/packaged
 PACKAGES = (
         'django_couchdb_utils',
-        'django_couchdb_utils.auth',
+        'django_couchdb_utils.couchauth',
         'django_couchdb_utils.cache',
         'django_couchdb_utils.email',
         'django_couchdb_utils.openid_consumer',

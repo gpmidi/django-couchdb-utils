@@ -9,7 +9,7 @@ from django_openid.consumer import Consumer as DjangoOpenidConsumer, \
                                    SessionConsumer as DjangoOpenidSessionConsumer, \
                                    CookieConsumer as DjangoOpenidCookieConsumer
 from .models import DjangoCouchDBOpenIDStore, UserOpenidAssociation
-from django_couchdb_utils.auth.models import User
+from django_couchdb_utils.couchauth.models import User
 from django.contrib.auth import login
 from couchdbkit.exceptions import ResourceNotFound
 
@@ -32,7 +32,7 @@ class AuthConsumer(SessionConsumer, DjangoOpenidAuthConsumer):
         return user.is_active
 
     def log_in_user(self, request, user):
-        user.backend = 'django_couchdb_utils.auth.backends.CouchDBAuthBackend'
+        user.backend = 'django_couchdb_utils.couchauth.backends.CouchDBAuthBackend'
         login(request, user)
 
     def do_associate(self, request):

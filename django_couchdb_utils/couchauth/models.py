@@ -10,7 +10,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password, check_password
 
-from django_couchdb_utils.auth import app_label
+from django_couchdb_utils.couchauth import app_label
 
 """
  django versions < 1.6 backward-compatibly patches

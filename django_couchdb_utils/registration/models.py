@@ -10,7 +10,7 @@ from couchdbkit.ext.django.schema import *
 from couchdbkit import ResourceConflict
 
 
-from ..auth.models import User
+from ..couchauth.models import User
 
 
 SHA1_RE = re.compile('^[a-f0-9]{40}$')
