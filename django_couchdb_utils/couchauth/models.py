@@ -47,7 +47,7 @@ class PasswordException(Exception):
 
 
 class User(Document):
-    username = StringProperty(required=True, primary_key=True)
+    username = StringProperty(required=True)
     first_name    = StringProperty(required=False)
     last_name     = StringProperty(required=False)
     email         = StringProperty(required=True)
