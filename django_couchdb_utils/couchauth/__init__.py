@@ -1,1 +1,10 @@
-app_label = 'django_couchdb_utils_auth'
+from django.apps import AppConfig
+
+
+class CouchDBUtilsAuthConfig(AppConfig):
+    name = 'django_couchdb_utils_auth'
+    verbose_name = "CouchDB Utils Auth"
+
+
+app_label = CouchDBUtilsAuthConfig.name
+default_app_config = "django_couchdb_utils.couchauth.CouchDBUtilsAuthConfig"
