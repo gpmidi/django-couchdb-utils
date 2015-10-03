@@ -6,5 +6,5 @@ class CouchDBUtilsAuthConfig(AppConfig):
     verbose_name = "CouchDB Utils Auth"
 
 
-app_label = CouchDBUtilsAuthConfig.name
+app_label = 'couchauth'
 default_app_config = "django_couchdb_utils.couchauth.CouchDBUtilsAuthConfig"
