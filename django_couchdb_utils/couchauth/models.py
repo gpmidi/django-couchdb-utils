@@ -58,8 +58,6 @@ class User(Document):
     last_login    = DateTimeProperty(required=False)
     date_joined   = DateTimeProperty(default=datetime.utcnow)
 
-    username.primary_key = True
-
     class Meta:
         app_label = app_label
 
