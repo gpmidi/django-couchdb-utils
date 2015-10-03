@@ -2,7 +2,7 @@ from django.apps import AppConfig
 
 
 class CouchDBUtilsAuthConfig(AppConfig):
-    name = 'django_couchdb_utils_auth'
+    name = 'django_couchdb_utils.couchauth'
     verbose_name = "CouchDB Utils Auth"
 
 
